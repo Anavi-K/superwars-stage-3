@@ -23,17 +23,17 @@ const PLAYERS = [
 
 // initialize players with image and strength
 const initPlayers = (players) => {
-    let detailedPlayers = '';
+    let detailedPlayers = [];
 
     // Instead of forloop use Map method
     // Code here
-    players.forEach((player, index) => {
+    players.forEach((x,y) => {
         detailedPlayers.push({
-            name: player,
-            strength: (2+index),
-            image: 'images/super-' + (index + 1) + '.png',
-            type: index%2==0?"hero":"villain",
-            id: index+1
+            name:x,
+            strength: getRandomStrength(),
+            image:'images/super-' + (y + 1) + '.png',
+            type: y%2==0?"hero":"villain",
+            id:y+1
         })
     });
     return detailedPlayers;
@@ -44,23 +44,32 @@ const getRandomStrength = () => {
     return Math.ceil(Math.random() * 100);
 }
 
-const view = (playerObj)=>{
+
+const view = (playerObj) => {
     let player = document.createElement('div');
     player.classList.add('player');
-    let image = document.createElement('img');
-    image.setAttribute('src', playerObj.image);
-    image.setAttribute('alt',"")
-    let name = document.createElement('div');
-    name.className="name";
-    name.textContent = playerObj.name;
-    let strength = document.createElement('div');
-    strength.textContent = playerObj.strength;
-    strength.className = 'strength';
-    player.append(image, name, strength);
+  
+    const elements = ['image', 'name', 'strength'];
+  
+    for (const elementName of elements) {
+      let element = document.createElement(elementName === 'image' ? 'img' : 'div');
+      if (elementName === 'image') {
+        element.setAttribute('src', playerObj.image);
+        element.setAttribute('alt', '');
+      }
+      if (elementName === 'name') {
+        element.className = 'name';
+        element.textContent = playerObj.name;
+      }
+      if (elementName === 'strength') {
+        element.textContent = playerObj.strength;
+        element.className = 'strength';
+      }
+      player.appendChild(element);
+    }
+  
     return player;
-
-} 
-
+  };
 // Build player template
 const buildPlayers = (players, type) => {
     let fragment = '';
@@ -70,7 +79,8 @@ const buildPlayers = (players, type) => {
     // Type your code here
     fragment = document.createElement("div");
     players.filter((x) => x.type == type).forEach((x) => fragment.appendChild(view(x)));
-    return fragment.innerHTML; 
+    return fragment.innerHTML;
+    
 }
 
 // Display players in HTML
